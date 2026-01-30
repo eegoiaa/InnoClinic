@@ -1,6 +1,7 @@
 using InnoClinic.Profiles.Application.Configuration;
 using InnoClinic.Profiles.Application.Doctors.Queries.GetDoctorsList;
 using InnoClinic.Profiles.Infrastructure.Configuration;
+using System.Text.Json.Serialization;
 using Wolverine;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,7 +13,13 @@ builder.Host.UseWolverine(options => {
     options.Discovery.IncludeAssembly(typeof(GetDoctorsListHandler).Assembly);
 });
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddJsonOptions(options =>
+    {
+
+        options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+    });
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
