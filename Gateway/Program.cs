@@ -1,3 +1,4 @@
+using InnoClinic.Common.MIddleware;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
 
@@ -10,6 +11,8 @@ builder.Services.AddSwaggerForOcelot(builder.Configuration);
 builder.Services.AddOcelot(builder.Configuration);
 
 var app = builder.Build();
+
+app.UseMiddleware<ExceptionHandlingMiddleware>();
 
 app.UseSwaggerForOcelotUI(options =>
 {
