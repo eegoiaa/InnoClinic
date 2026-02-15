@@ -26,13 +26,18 @@ public class ExceptionHandlingMiddleware
         catch (Exception ex)
         {
             var traceId = Guid.NewGuid().ToString();
-            _logger.LogError(ex, $"Error ID: {traceId}. Messsage: {ex.Message}");
+            var endpoint = context.GetEndpoint();
+            var technicalAction = endpoint?.DisplayName ?? $"{context.Request.Method} {context.Request.Path}";
+            var publicAction = $"{context.Request.Method} {context.Request.Path}";
+
+            _logger.LogError(ex, "Error ID: {TraceId}. Technical Action: {Action}. Message: {Message}",
+                traceId, technicalAction, ex.Message);
 
             var (statusCode, safeMessage) = ex switch
             {
-                OperationCanceledException => (499, "Запрос был отменен пользователем"),
-                UnauthorizedAccessException => (401, "Доступ запрещен"),
-                _ => (500, "На сервере произошла непредвиденная ошибка. Обратить в поддержку.")
+                OperationCanceledException => (499, $"The request for '{publicAction}' has been cancelled."),
+                UnauthorizedAccessException => (401, "Access is denied"),
+                _ => (500, $"An error occurred while performing an action: {publicAction}")
             };
 
             await HandleExceptionAsync(context, statusCode, safeMessage, traceId, env, ex);
