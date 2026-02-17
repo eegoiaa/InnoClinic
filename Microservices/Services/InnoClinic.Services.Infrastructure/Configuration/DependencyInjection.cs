@@ -14,17 +14,21 @@ public static class DependencyInjection
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
         var connectionString = configuration.GetConnectionString("DefaultConnection");
-        services.AddDbContext<ServicesDbContext>(options => options.UseNpgsql(connectionString, x =>
-            x.MigrationsAssembly(typeof(ServicesDbContext).Assembly.FullName)));
+
+        services.AddDbContext<ServicesDbContext>(options =>
+            options.UseNpgsql(connectionString, 
+            x => x.MigrationsAssembly(typeof(ServicesDbContext).Assembly.GetName().Name)));
         return services;
     }
 
-    public static IHostBuilder AddMessaging(this IHostBuilder host, Assembly applicationAssembly)
+    public static IHostBuilder AddMessaging(this IHostBuilder host, Assembly applicationAssembly, IConfiguration configuration)
     {
         return host.UseWolverine(options =>
         {
             options.Discovery.IncludeAssembly(applicationAssembly);
-            options.UseRabbitMq(new Uri("amqp://guest:guest@localhost:5672"))
+            var rabbitUri = configuration.GetConnectionString("RabbitMq")
+                            ?? throw new InvalidOperationException("RabbitMq connection string is missing!");
+            options.UseRabbitMq(new Uri(rabbitUri))
                    .AutoProvision()
                    .DeclareExchange("specialization-updates", exchange =>
                    {

@@ -26,7 +26,7 @@ public static class GetServicesHandler
         {
             var services = await servicesQuery.ToListAsync(cancellationToken);
 
-            var lookups = await dbContext.SpecializationLookups
+            var lookups = await dbContext.SpecializationReferences
                 .AsNoTracking()
                 .ToListAsync(cancellationToken);
 

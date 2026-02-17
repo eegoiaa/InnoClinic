@@ -11,8 +11,8 @@ public static class SpecializationCreatedConsumer
         ServicesDbContext dbContext
         )
     {
-        var lookup = new SpecializationLookup { Id = message.Id, Name = message.Name };
-        dbContext.SpecializationLookups.Add( lookup );
+        var lookup = new SpecializationReference { Id = message.Id, Name = message.Name };
+        dbContext.SpecializationReferences.Add( lookup );
         await dbContext.SaveChangesAsync();
     } 
 }

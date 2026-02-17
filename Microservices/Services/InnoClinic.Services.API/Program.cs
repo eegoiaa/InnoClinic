@@ -12,7 +12,7 @@ builder.Services.AddControllers()
         options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
     });
 
-builder.Host.AddMessaging(typeof(GetServicesQuery).Assembly);
+builder.Host.AddMessaging(typeof(GetServicesQuery).Assembly, builder.Configuration);
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 

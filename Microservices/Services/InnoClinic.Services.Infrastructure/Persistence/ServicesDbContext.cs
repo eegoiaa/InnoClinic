@@ -9,7 +9,7 @@ public class ServicesDbContext : DbContext
     public ServicesDbContext(DbContextOptions<ServicesDbContext> options) : base(options) { }
     public DbSet<Service> Services { get; set; }
     public DbSet<ServiceCategory> ServiceCategories { get; set; }
-    public DbSet<SpecializationLookup> SpecializationLookups { get; set; }
+    public DbSet<SpecializationReference> SpecializationReferences{ get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

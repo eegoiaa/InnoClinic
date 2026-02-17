@@ -77,7 +77,7 @@ namespace InnoClinic.Services.Infrastructure.Migrations
                     b.ToTable("ServiceCategories");
                 });
 
-            modelBuilder.Entity("InnoClinic.Services.Domain.Entities.SpecializationLookup", b =>
+            modelBuilder.Entity("InnoClinic.Services.Domain.Entities.SpecializationReference", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()

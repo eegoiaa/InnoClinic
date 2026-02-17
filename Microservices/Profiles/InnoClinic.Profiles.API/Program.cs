@@ -7,7 +7,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddInfrastructure(builder.Configuration);
 builder.Services.AddApplication();
-builder.Host.AddMessaging(typeof(GetDoctorsListHandler).Assembly);
+builder.Host.AddMessaging(typeof(GetDoctorsListHandler).Assembly, builder.Configuration);
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
