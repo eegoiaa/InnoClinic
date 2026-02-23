@@ -13,8 +13,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Common\InnoClinic.Common.csproj" />
+    <ProjectReference Include="..\..\Common\InnoClinic.Common.csproj" />
   </ItemGroup>
+
 
   <ItemGroup>
     <Content Update="ocelot.json">

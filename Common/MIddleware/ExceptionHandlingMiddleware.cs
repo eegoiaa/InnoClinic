@@ -44,8 +44,8 @@ public class ExceptionHandlingMiddleware
         }
     }
 
-    public static Task HandleExceptionAsync
-        (HttpContext context,
+    public static Task HandleExceptionAsync(
+        HttpContext context,
         int statusCode,
         string message,
         string traceId,
@@ -57,7 +57,7 @@ public class ExceptionHandlingMiddleware
 
         var response = new
         {
-            Status = statusCode,
+            StatusCode = statusCode,
             Message = message,
             TraceId = traceId,
             Details = env.IsDevelopment() ? ex.ToString() : null

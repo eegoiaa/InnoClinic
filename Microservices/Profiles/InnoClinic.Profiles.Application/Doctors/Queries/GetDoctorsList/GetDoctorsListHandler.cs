@@ -36,7 +36,9 @@ public class GetDoctorsListHandler
             d.Id,
             d.FullName,
             d.Specialization != null ? d.Specialization.SpecializationName : "No Specialization",
+            d.SpecializationId,
             d.Office != null ? d.Office.Address : "No Office",
+            d.OfficeId,
             timeProvider.GetUtcNow().Year - d.CareerStartYear + 1,
             d.AccountId
             )).ToListAsync(cancellationToken);
