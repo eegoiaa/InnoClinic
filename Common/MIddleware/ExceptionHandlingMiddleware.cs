@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Hosting;
 using System.Text.Json;
 using Microsoft.Extensions.Hosting;
+using InnoClinic.Common.Exceptions;
 
 namespace InnoClinic.Common.MIddleware;
 
@@ -37,6 +38,8 @@ public class ExceptionHandlingMiddleware
             {
                 OperationCanceledException => (499, $"The request for '{publicAction}' has been cancelled."),
                 UnauthorizedAccessException => (401, "Access is denied"),
+                BaseBusinessException businessEx => (409, businessEx.Message),
+                FluentValidation.ValidationException valEx => (400, string.Join("; ", valEx.Errors.Select(e => e.ErrorMessage))),
                 _ => (500, $"An error occurred while performing an action: {publicAction}")
             };
 

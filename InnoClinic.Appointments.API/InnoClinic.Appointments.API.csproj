@@ -18,10 +18,6 @@
 	</ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Controllers\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\InnoClinic.Appointments.Application\InnoClinic.Appointments.Application.csproj" />
     <ProjectReference Include="..\InnoClinic.Appointments.Infrastructure\InnoClinic.Appointments.Infrastructure.csproj" />
   </ItemGroup>
