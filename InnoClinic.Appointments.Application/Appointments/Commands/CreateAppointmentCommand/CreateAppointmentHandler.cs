@@ -12,6 +12,18 @@ public static class CreateAppointmentHandler
         AppointmentDbContext dbContext, 
         CancellationToken cancellationToken)
     {
+        var doctorExist = await dbContext.DoctorReferences
+            .AnyAsync(d => d.Id == command.DoctorId, cancellationToken);
+
+        if (!doctorExist)
+            throw new NotFoundException($"Doctor with ID {command.DoctorId} not found.");
+
+        var serviceExist = await dbContext.ServiceReferences
+            .AnyAsync(s => s.Id == command.ServiceId, cancellationToken);
+
+        if (!serviceExist)
+            throw new NotFoundException($"Service with ID {command.ServiceId} not found.");
+
         var isBusy = await dbContext.Appointments
             .AnyAsync(a => a.DoctorId == command.DoctorId &&
                       a.Date == command.Date &&

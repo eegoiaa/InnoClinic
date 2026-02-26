@@ -6,6 +6,11 @@ export default defineConfig({
   server: {
     port: 3000,
     proxy: {
+      '/appointments/api': {
+        target: 'https://localhost:8000', 
+        changeOrigin: true,
+        secure: false,
+      },
       '/profiles/api': {
         target: 'https://localhost:8000',
         changeOrigin: true,
