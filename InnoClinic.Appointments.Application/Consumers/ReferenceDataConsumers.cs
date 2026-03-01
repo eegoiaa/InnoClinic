@@ -8,9 +8,9 @@ namespace InnoClinic.Appointments.Application.Consumers;
 
 public static class ReferenceDataConsumers
 {
-    public static async Task Handle(DoctorCreatedEvent message, AppointmentDbContext dbContext)
+    public static async Task Handle(DoctorCreatedEvent message, AppointmentDbContext dbContext, CancellationToken cancellationToken)
     {
-        var exist = await dbContext.DoctorReferences.AnyAsync(d => d.Id == message.Id);
+        var exist = await dbContext.DoctorReferences.AnyAsync(d => d.Id == message.Id, cancellationToken);
         if (exist) return;
 
         var doctorRef = new DoctorReference
@@ -19,13 +19,13 @@ public static class ReferenceDataConsumers
             FullName = message.FullName
         };
 
-        dbContext.DoctorReferences.Add(doctorRef);
-        await dbContext.SaveChangesAsync();
+        await dbContext.DoctorReferences.AddAsync(doctorRef, cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
     }
 
-    public static async Task Handle(ServiceCreatedEvent message, AppointmentDbContext dbContext)
+    public static async Task Handle(ServiceCreatedEvent message, AppointmentDbContext dbContext, CancellationToken cancellationToken)
     {
-        var exist = await dbContext.ServiceReferences.AnyAsync(d => d.Id == message.Id);
+        var exist = await dbContext.ServiceReferences.AnyAsync(d => d.Id == message.Id, cancellationToken);
         if (exist) return;
 
         var serviceRef = new ServiceReference
@@ -34,7 +34,7 @@ public static class ReferenceDataConsumers
             ServiceName = message.Name
         };
 
-        dbContext.ServiceReferences.Add(serviceRef);
-        await dbContext.SaveChangesAsync();
+        await dbContext.ServiceReferences.AddAsync(serviceRef, cancellationToken);
+        await dbContext.SaveChangesAsync(cancellationToken);
     }
 }

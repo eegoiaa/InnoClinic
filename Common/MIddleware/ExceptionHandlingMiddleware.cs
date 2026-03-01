@@ -36,7 +36,7 @@ public class ExceptionHandlingMiddleware
 
             var (statusCode, safeMessage) = ex switch
             {
-                OperationCanceledException => (499, $"The request for '{publicAction}' has been cancelled."),
+                OperationCanceledException => (409, $"The request for '{publicAction}' has been cancelled."),
                 UnauthorizedAccessException => (401, "Access is denied"),
                 BaseBusinessException businessEx => (businessEx.StatusCode, businessEx.Message),
                 FluentValidation.ValidationException valEx => (400, string.Join("; ", valEx.Errors.Select(e => e.ErrorMessage))),

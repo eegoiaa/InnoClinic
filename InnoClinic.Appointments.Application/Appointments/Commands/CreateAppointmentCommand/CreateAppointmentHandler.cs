@@ -44,7 +44,7 @@ public static class CreateAppointmentHandler
             IsApproved = false
         };
 
-        dbContext.Appointments.Add(appointment);
+        await dbContext.Appointments.AddAsync(appointment, cancellationToken);
         await dbContext.SaveChangesAsync(cancellationToken);
     }
 }
