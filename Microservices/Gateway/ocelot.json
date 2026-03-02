@@ -49,6 +49,31 @@
       ],
       "UpstreamPathTemplate": "/services/swagger/v1/swagger.json",
       "SwaggerKey": "services"
+    },
+    {
+      "DownstreamPathTemplate": "/api/{everything}",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7070
+        }
+      ],
+      "UpstreamPathTemplate": "/appointments/api/{everything}",
+      "UpstreamHttpMethod": [ "Get", "Post", "Put", "Delete" ],
+      "SwaggerKey": "appointments"
+    },
+    {
+      "DownstreamPathTemplate": "/swagger/v1/swagger.json",
+      "DownstreamScheme": "https",
+      "DownstreamHostAndPorts": [
+        {
+          "Host": "localhost",
+          "Port": 7070
+        }
+      ],
+      "UpstreamPathTemplate": "/appointments/swagger/v1/swagger.json",
+      "SwaggerKey": "appointments"
     }
   ],
   "SwaggerEndPoints": [
@@ -71,6 +96,17 @@
           "Name": "Services API",
           "Version": "v1",
           "Url": "https://localhost:7246/swagger/v1/swagger.json"
+        }
+      ]
+    },
+    {
+      "Key": "appointments",
+      "TransformByOcelotConfig": true,
+      "Config": [
+        {
+          "Name": "Appointments API",
+          "Version": "v1",
+          "Url": "https://localhost:7070/swagger/v1/swagger.json"
         }
       ]
     }
