@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>288c1f22-eedd-4b8a-a8f6-5d61db60da1d</UserSecretsId>
+  </PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.0">
+			<PrivateAssets>all</PrivateAssets>
+			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
+		<PackageReference Include="WolverineFx.Http" Version="3.13.5" />
+		<PackageReference Include="WolverineFx.RabbitMQ" Version="3.13.5" />
+	</ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\InnoClinic.Appointments.Application\InnoClinic.Appointments.Application.csproj" />
+    <ProjectReference Include="..\InnoClinic.Appointments.Infrastructure\InnoClinic.Appointments.Infrastructure.csproj" />
+  </ItemGroup>
+
+</Project>
