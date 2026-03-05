@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using InnoClinic.Auth.Domain.Entities;
 
 namespace InnoClinic.Auth.Application.Commands.SignUp;
 
