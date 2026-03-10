@@ -1,5 +1,7 @@
 ﻿using InnoClinic.Auth.Application.Interfaces;
+using InnoClinic.Auth.Domain.Constants;
 using InnoClinic.Auth.Domain.Entities;
+using InnoClinic.Auth.Domain.Settings;
 using InnoClinic.Auth.Infrastructure.Persistence;
 using InnoClinic.Auth.Infrastructure.Services;
 using Microsoft.AspNetCore.Identity;
@@ -16,6 +18,8 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
+        services.Configure<AuthOptions>(configuration.GetSection(AuthOptions.SectionName));
+
         var connectionString = configuration.GetConnectionString("DefaultConnection");
 
         services.AddDbContext<AuthDbContext>(options =>
@@ -26,11 +30,11 @@ public static class DependencyInjection
 
         services.AddIdentity<ApplicationUser, IdentityRole<Guid>>(options =>
         {
-            options.Password.RequiredLength = 6;
-            options.Password.RequireDigit = true;
-            options.Password.RequireLowercase = false;
-            options.Password.RequireUppercase = false;
-            options.Password.RequireNonAlphanumeric = false;
+            options.Password.RequiredLength = AuthConstants.RequiredLength;
+            options.Password.RequireDigit = AuthConstants.RequireDigit;
+            options.Password.RequireLowercase = AuthConstants.RequireLowercase;
+            options.Password.RequireUppercase = AuthConstants.RequireUppercase;
+            options.Password.RequireNonAlphanumeric = AuthConstants.RequireNonAlphanumeric;
             options.User.RequireUniqueEmail = true;
         })
         .AddEntityFrameworkStores<AuthDbContext>()

@@ -2,5 +2,5 @@
 
 public interface IEmailService
 {
-    Task SendConfirmationLinkAsync(string email, string link);
+    Task SendConfirmationLinkAsync(string email, string link, CancellationToken cancellationToken);
 }

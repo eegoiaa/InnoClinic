@@ -1,8 +1,10 @@
 ﻿using InnoClinic.Auth.Application.Interfaces;
 using InnoClinic.Auth.Domain.Entities;
 using InnoClinic.Auth.Domain.Exceptions;
+using InnoClinic.Auth.Domain.Settings;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 
 namespace InnoClinic.Auth.Application.Commands.SignUp;
 
@@ -12,7 +14,7 @@ public static class SignUpHandler
         SignUpCommand command,
         UserManager<ApplicationUser> userManager,
         IEmailService emailService,
-        IConfiguration configuration,
+        IOptions<AuthOptions> options,
         CancellationToken cancellationToken
         )
     {
@@ -31,11 +33,9 @@ public static class SignUpHandler
 
         var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
 
-        var frontendUrl = configuration["AuthSettings:FrontendConfirmationUrl"]
-            ?? throw new IdentityException("Frontend confirmation URL is not configured");
+        var settings = options.Value;
+        var confirmationLink = $"{settings.FrontendConfirmationUrl}?userId={user.Id}&token={Uri.EscapeDataString(token)}";
 
-        var confirmationLink = $"{frontendUrl}?userId={user.Id}&token={Uri.EscapeDataString(token)}";
-
-        await emailService.SendConfirmationLinkAsync(user.Email, confirmationLink);
+        await emailService.SendConfirmationLinkAsync(user.Email, confirmationLink, cancellationToken);
     }
 }

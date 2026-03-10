@@ -14,7 +14,7 @@ public class EmailService : IEmailService
         _configuration = configuration;
     }
 
-    public async Task SendConfirmationLinkAsync(string email, string link)
+    public async Task SendConfirmationLinkAsync(string email, string link, CancellationToken cancellationToken)
     {
         var host = _configuration["SmtpSettings:Host"];
         var port = int.Parse(_configuration["SmtpSettings:Port"] ?? "2525");
@@ -37,6 +37,6 @@ public class EmailService : IEmailService
         };
         mailMessage.To.Add(email);
 
-        await client.SendMailAsync(mailMessage);
+        await client.SendMailAsync(mailMessage, cancellationToken);
     }
 }

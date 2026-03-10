@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Stack, TextField, Button, IconButton, InputAdornment, Typography, Link, Box } from '@mui/material';
+import { Stack, TextField, Button, IconButton, InputAdornment, Typography, Link, Box, CircularProgress } from '@mui/material';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import EmailIcon from '@mui/icons-material/Email';
@@ -11,6 +11,9 @@ export const SignUpForm = ({ onSwitchToSignIn, onSuccess }: { onSwitchToSignIn: 
   const [touched, setTouched] = useState<Record<string, boolean>>({});
   const [showPwd, setShowPwd] = useState(false);
   const [serverError, setServerError] = useState('');
+  
+  // Правка: Состояние загрузки
+  const [isLoading, setIsLoading] = useState(false);
 
   const validate = () => {
     const errs: Record<string, string> = {};
@@ -26,11 +29,15 @@ export const SignUpForm = ({ onSwitchToSignIn, onSuccess }: { onSwitchToSignIn: 
 
   const handleSubmit = async () => {
     setServerError('');
+    setIsLoading(true);
+    
     try {
       await signUp(values);
       onSuccess();
     } catch (err: any) {
       setServerError(err.message);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -39,7 +46,6 @@ export const SignUpForm = ({ onSwitchToSignIn, onSuccess }: { onSwitchToSignIn: 
       <TextField
         label="E-mail"
         fullWidth
-        // shrink: true гарантирует, что надпись не будет "наезжать" на иконку
         InputLabelProps={{ shrink: true }}
         error={(touched.email && !!errors.email) || !!serverError}
         helperText={(touched.email && errors.email) || serverError}
@@ -100,7 +106,7 @@ export const SignUpForm = ({ onSwitchToSignIn, onSuccess }: { onSwitchToSignIn: 
         variant="contained"
         fullWidth
         size="large"
-        disabled={!isFormValid}
+        disabled={!isFormValid || isLoading}
         onClick={handleSubmit}
         sx={{ 
           borderRadius: 3, 
@@ -109,10 +115,15 @@ export const SignUpForm = ({ onSwitchToSignIn, onSuccess }: { onSwitchToSignIn: 
           bgcolor: '#1a237e',
           fontSize: '1rem',
           boxShadow: '0 4px 12px rgba(26, 35, 126, 0.3)',
-          '&:hover': { bgcolor: '#0d145a', boxShadow: '0 6px 16px rgba(26, 35, 126, 0.4)' }
+          '&:hover': { bgcolor: '#0d145a', boxShadow: '0 6px 16px rgba(26, 35, 126, 0.4)' },
+          minHeight: '56px' 
         }}
       >
-        SIGN UP
+        {isLoading ? (
+          <CircularProgress size={24} sx={{ color: 'white' }} />
+        ) : (
+          "SIGN UP"
+        )}
       </Button>
 
       <Box sx={{ textAlign: 'center' }}>

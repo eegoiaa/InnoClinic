@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using InnoClinic.Auth.Domain.Constants;
 
 namespace InnoClinic.Auth.Application.Commands.SignUp;
 
@@ -6,15 +7,24 @@ public class SignUpValidator : AbstractValidator<SignUpCommand>
 {
     public SignUpValidator()
     {
-        RuleFor(s => s.Email)
+        RuleFor(x => x.Email)
             .NotEmpty().WithMessage("Please, enter the email")
-            .EmailAddress().WithMessage("You've entered an invalid email");
+            .Matches(@"^[^@\s]+@[^@\s]+\.[^@\s]+$").WithMessage("You've entered an invalid email");
 
-        RuleFor(s => s.Password)
+        RuleFor(x => x.Password)
             .NotEmpty().WithMessage("Please, enter the password")
-            .Length(6, 15).WithMessage("Password must be between 6 and 15 symbols");
+            .MinimumLength(AuthConstants.RequiredLength)
+                .WithMessage($"Min {AuthConstants.RequiredLength} symbols required")
+            .Matches(@"[0-9]").When(_ => AuthConstants.RequireDigit)
+                .WithMessage("Password must contain at least one digit")
+            .Matches(@"[A-Z]").When(_ => AuthConstants.RequireUppercase)
+                .WithMessage("Password must contain at least one uppercase letter")
+            .Matches(@"[a-z]").When(_ => AuthConstants.RequireLowercase)
+                .WithMessage("Password must contain at least one lowercase letter")
+            .Matches(@"[^a-zA-Z0-9]").When(_ => AuthConstants.RequireNonAlphanumeric)
+                .WithMessage("Password must contain at least one special character");
 
-        RuleFor(s => s.ConfirmPassword)
+        RuleFor(x => x.ConfirmPassword)
             .NotEmpty().WithMessage("Please, reenter the password")
             .Equal(x => x.Password).WithMessage("The passwords you’ve entered don’t coincide");
     }
