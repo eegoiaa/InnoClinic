@@ -1,36 +1,33 @@
 ﻿using InnoClinic.Auth.Application.Interfaces;
+using InnoClinic.Auth.Domain.Settings;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using System.Net;
 using System.Net.Mail;
+using System.Runtime;
 
 namespace InnoClinic.Auth.Infrastructure.Services;
 
 public class EmailService : IEmailService
 {
-    private readonly IConfiguration _configuration;
+    private readonly SmtpOptions _smtpOptions;
 
-    public EmailService(IConfiguration configuration)
+    public EmailService(IOptions<SmtpOptions> smtpOptions)
     {
-        _configuration = configuration;
+        _smtpOptions = smtpOptions.Value;
     }
 
     public async Task SendConfirmationLinkAsync(string email, string link, CancellationToken cancellationToken)
     {
-        var host = _configuration["SmtpSettings:Host"];
-        var port = int.Parse(_configuration["SmtpSettings:Port"] ?? "2525");
-        var username = _configuration["SmtpSettings:Username"];
-        var password = _configuration["SmtpSettings:Password"];
-        var fromEmail = _configuration["SmtpSettings:FromEmail"];
-
-        using var client = new SmtpClient(host, port)
+        using var client = new SmtpClient(_smtpOptions.Host, _smtpOptions.Port)
         {
-            Credentials = new NetworkCredential(username, password),
+            Credentials = new NetworkCredential(_smtpOptions.Username, _smtpOptions.Password),
             EnableSsl = true
         };
 
         var mailMessage = new MailMessage
         {
-            From = new MailAddress(fromEmail!),
+            From = new MailAddress(_smtpOptions.FromEmail),
             Subject = "InnoClinic - Confirm your registration",
             Body = $"<h1>Welcome!</h1><p>Please confirm your registration by clicking <a href='{link}'>this link</a>.</p>",
             IsBodyHtml = true
