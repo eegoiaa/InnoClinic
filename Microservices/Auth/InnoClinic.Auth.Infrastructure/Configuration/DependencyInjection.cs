@@ -37,6 +37,14 @@ public static class DependencyInjection
             .Validate(s => !string.IsNullOrWhiteSpace(s.FromEmail), "SMTP: FromEmail is required.")
             .ValidateOnStart();
 
+        services.AddOptions<JwtOptions>()
+            .Bind(configuration.GetSection(JwtOptions.SectionName))
+            .Validate(j => !string.IsNullOrWhiteSpace(j.SecretKey) && j.SecretKey.Length >= 16, "JWT: SecretKey must be at least 16 characters long.")
+            .Validate(o => !string.IsNullOrWhiteSpace(o.Issuer), "JWT: Issuer is required.")
+            .Validate(o => !string.IsNullOrWhiteSpace(o.Audience), "JWT: Audience is required.")
+            .Validate(o => o.AccessTokenExpirationMinutes > 0, "JWT: AccessTokenExpiration must be positive.")
+            .ValidateOnStart();
+
         var connectionString = configuration.GetConnectionString("DefaultConnection");
 
         services.AddDbContext<AuthDbContext>(options =>
@@ -58,6 +66,7 @@ public static class DependencyInjection
         .AddDefaultTokenProviders();
 
         services.AddTransient<IEmailService, EmailService>();
+        services.AddScoped<IJwtProvider, JwtProvider>();
 
         return services;
     }
