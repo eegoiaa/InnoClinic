@@ -18,12 +18,24 @@ public static class DependencyInjection
 {
     public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
     {
+        services.AddOptions<DatabaseOptions>()
+            .Bind(configuration.GetSection(DatabaseOptions.SectionName))
+            .Validate(d => !string.IsNullOrWhiteSpace(d.DefaultConnection), "Database: Connection string 'DefaultConnection' is missing or empty.")
+            .ValidateOnStart();
+
         services.AddOptions<AuthOptions>()
             .Bind(configuration.GetSection(AuthOptions.SectionName))
             .Validate(a => !string.IsNullOrWhiteSpace(a.FrontendConfirmationUrl), "Frontend confirmation URL is missing or empty in configuration.")
             .ValidateOnStart();
 
-        services.Configure<SmtpOptions>(configuration.GetSection(SmtpOptions.SectionName));
+        services.AddOptions<SmtpOptions>()
+            .Bind(configuration.GetSection(SmtpOptions.SectionName))
+            .Validate(s => !string.IsNullOrWhiteSpace(s.Host), "SMTP: Host is required.")
+            .Validate(s => s.Port > 0, "SMTP: Port must be a positive number.")
+            .Validate(s => !string.IsNullOrWhiteSpace(s.Username), "SMTP: Username is required.")
+            .Validate(s => !string.IsNullOrWhiteSpace(s.Password), "SMTP: Password is required.")
+            .Validate(s => !string.IsNullOrWhiteSpace(s.FromEmail), "SMTP: FromEmail is required.")
+            .ValidateOnStart();
 
         var connectionString = configuration.GetConnectionString("DefaultConnection");
 
