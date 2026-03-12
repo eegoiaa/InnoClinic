@@ -1,7 +1,9 @@
 ﻿using InnoClinic.Auth.Application.Commands.ConfirmEmail;
+using InnoClinic.Auth.Application.Commands.SignIn;
 using InnoClinic.Auth.Application.Commands.SignUp;
 using Microsoft.AspNetCore.Mvc;
 using Wolverine;
+using SignInResult = InnoClinic.Auth.Application.Commands.SignIn.SignInResult;
 
 namespace InnoClinic.Auth.API.Controllers;
 
@@ -27,5 +29,30 @@ public class AuthController : ControllerBase
     {
         await _messageBus.InvokeAsync(command);
         return Ok(new { message = "Email confirmed successfully. You can now log in." });
+    }
+
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] SignInCommand command)
+    {
+        var result = await _messageBus.InvokeAsync<SignInResult>(command);
+        var cookieOptions = new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.Strict,
+            Expires = DateTime.UtcNow.AddMinutes(30)
+        };
+        Response.Cookies.Append("access_token", result.AccessToken, cookieOptions);
+
+        var refreshCookieOptions = new CookieOptions
+        {
+            HttpOnly = true,
+            Secure = true,
+            SameSite = SameSiteMode.Strict,
+            Expires = DateTime.UtcNow.AddDays(7)
+        };
+        Response.Cookies.Append("refresh_token", result.RefreshToken, refreshCookieOptions);
+
+        return Ok(new { Message = "You've signed in successfully" });
     }
 }
