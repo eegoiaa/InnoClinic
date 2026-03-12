@@ -1,42 +1,48 @@
+// Client/src/App.tsx
 import { useState } from 'react';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom'; // Добавили роутинг
 import { Box, AppBar, Toolbar, Button, Container, Typography } from '@mui/material';
 import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 import DoctorsPage from './pages/DoctorsPage'; 
 import { ServicesPage } from './pages/ServicesPage';
+import { ConfirmEmailPage } from './pages/ConfirmEmailPage'; // Наша новая страница
 import { AppointmentModal } from './components/AppointmentModal'; 
+import { AuthModal } from './components/auth/AuthModal';
+
 function App() {
-  const [currentPage, setCurrentPage] = useState<'doctors' | 'services'>('doctors');
+  const navigate = useNavigate();
+  const location = useLocation();
   const [isAppointmentModalOpen, setIsAppointmentModalOpen] = useState(false); 
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
   return (
     <Box sx={{ flexGrow: 1, bgcolor: '#f8fafc', minHeight: '100vh' }}>
       <AppBar position="sticky" sx={{ bgcolor: '#1a237e' }}>
         <Container maxWidth="lg">
           <Toolbar disableGutters>
-            <Typography variant="h6" sx={{ mr: 4, fontWeight: 800, color: '#fff' }}>
+            <Typography variant="h6" onClick={() => navigate('/')} sx={{ mr: 4, fontWeight: 800, color: '#fff', cursor: 'pointer' }}>
               InnoClinic
             </Typography>
             
             <Box sx={{ flexGrow: 1, display: 'flex', gap: 2 }}>
               <Button 
                 color="inherit" 
-                onClick={() => setCurrentPage('doctors')}
+                onClick={() => navigate('/')}
                 sx={{ 
-                  borderBottom: currentPage === 'doctors' ? '2px solid white' : 'none', 
-                  borderRadius: 0,
-                  opacity: currentPage === 'doctors' ? 1 : 0.7
+                  borderBottom: location.pathname === '/' ? '2px solid white' : 'none', 
+                  borderRadius: 0 
                 }}
               >
                 Врачи
               </Button>
               <Button 
                 color="inherit" 
-                onClick={() => setCurrentPage('services')}
+                onClick={() => navigate('/services')}
                 sx={{ 
-                  borderBottom: currentPage === 'services' ? '2px solid white' : 'none', 
-                  borderRadius: 0,
-                  opacity: currentPage === 'services' ? 1 : 0.7
+                  borderBottom: location.pathname === '/services' ? '2px solid white' : 'none', 
+                  borderRadius: 0 
                 }}
               >
                 Услуги
@@ -44,32 +50,40 @@ function App() {
             </Box>
 
             <Button 
-              variant="contained" 
-              color="secondary"
-              startIcon={<MedicalServicesIcon />}
-              onClick={() => setIsAppointmentModalOpen(true)}
+              color="inherit"
+              startIcon={<AccountCircleIcon />}
+              onClick={() => setIsAuthModalOpen(true)}
               sx={{ 
-                ml: 2, 
-                fontWeight: 700, 
-                borderRadius: 2,
-                bgcolor: '#f50057',
-                '&:hover': { bgcolor: '#c51162' }
+                fontWeight: 700, mr: 2, borderRadius: 2, px: 2,
+                '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.2)' }
               }}
             >
-              Записаться на прием
+              Войти
+            </Button>
+
+            <Button 
+              variant="contained" color="secondary"
+              startIcon={<MedicalServicesIcon />}
+              onClick={() => setIsAppointmentModalOpen(true)}
+              sx={{ fontWeight: 700, borderRadius: 2, bgcolor: '#f50057' }}
+            >
+              Записаться
             </Button>
           </Toolbar>
         </Container>
       </AppBar>
 
+      {/* Контент меняется в зависимости от URL */}
       <Box sx={{ py: 4 }}>
-        {currentPage === 'doctors' ? <DoctorsPage /> : <ServicesPage />}
+        <Routes>
+          <Route path="/" element={<DoctorsPage />} />
+          <Route path="/services" element={<ServicesPage />} />
+          <Route path="/confirm-email" element={<ConfirmEmailPage />} />
+        </Routes>
       </Box>
 
-      <AppointmentModal 
-        open={isAppointmentModalOpen} 
-        onClose={() => setIsAppointmentModalOpen(false)} 
-      />
+      <AppointmentModal open={isAppointmentModalOpen} onClose={() => setIsAppointmentModalOpen(false)} />
+      <AuthModal open={isAuthModalOpen} onClose={() => setIsAuthModalOpen(false)} />
     </Box>
   );
 }

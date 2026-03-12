@@ -1,0 +1,25 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.24" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.24">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+	  <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="8.0.0" />
+	 
+  </ItemGroup>
+
+  <ItemGroup>
+	  <ProjectReference Include="..\..\..\Common\InnoClinic.Common.csproj" />
+    <ProjectReference Include="..\InnoClinic.Auth.Domain\InnoClinic.Auth.Domain.csproj" />
+	<ProjectReference Include="..\InnoClinic.Auth.Application\InnoClinic.Auth.Application.csproj" />
+  </ItemGroup>
+
+</Project>
