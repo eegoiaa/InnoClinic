@@ -4,6 +4,11 @@ export interface SignUpRequest {
   confirmPassword: string;
 }
 
+export interface SignInRequest {
+  email: string;
+  password: string;
+}
+
 export interface ConfirmEmailRequest {
   userId: string;
   token: string;

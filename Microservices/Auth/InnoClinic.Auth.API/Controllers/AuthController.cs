@@ -1,6 +1,8 @@
 ﻿using InnoClinic.Auth.Application.Commands.ConfirmEmail;
 using InnoClinic.Auth.Application.Commands.SignIn;
 using InnoClinic.Auth.Application.Commands.SignUp;
+using InnoClinic.Auth.Application.Queries.CheckEmail;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Wolverine;
 using SignInResult = InnoClinic.Auth.Application.Commands.SignIn.SignInResult;
@@ -54,5 +56,20 @@ public class AuthController : ControllerBase
         Response.Cookies.Append("refresh_token", result.RefreshToken, refreshCookieOptions);
 
         return Ok(new { Message = "You've signed in successfully" });
+    }
+
+    [AllowAnonymous]
+    [HttpGet("check-email")]
+    public async Task<IActionResult> CheckEmail([FromQuery(Name = "email")] string? email)
+    {
+        if (string.IsNullOrWhiteSpace(email))
+            return BadRequest(new { Message = "Email parameter is missing or empty" });
+        
+        var exists = await _messageBus.InvokeAsync<bool>(new CheckEmailQuery(email));
+
+        if (!exists)
+            return NotFound(new { Message = "User with this email doesn't exist" });
+
+        return Ok();
     }
 }

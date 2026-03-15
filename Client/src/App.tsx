@@ -1,19 +1,22 @@
 // Client/src/App.tsx
 import { useState } from 'react';
-import { Routes, Route, useNavigate, useLocation } from 'react-router-dom'; // Добавили роутинг
-import { Box, AppBar, Toolbar, Button, Container, Typography } from '@mui/material';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
+import { Box, AppBar, Toolbar, Button, Container, Typography, Avatar, IconButton, Tooltip } from '@mui/material';
 import MedicalServicesIcon from '@mui/icons-material/MedicalServices';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import LogoutIcon from '@mui/icons-material/Logout'; 
 
 import DoctorsPage from './pages/DoctorsPage'; 
 import { ServicesPage } from './pages/ServicesPage';
-import { ConfirmEmailPage } from './pages/ConfirmEmailPage'; // Наша новая страница
+import { ConfirmEmailPage } from './pages/ConfirmEmailPage';
 import { AppointmentModal } from './components/AppointmentModal'; 
 import { AuthModal } from './components/auth/AuthModal';
+import { useAuth } from './context/AuthContext'; 
 
 function App() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { user, logout } = useAuth(); 
   const [isAppointmentModalOpen, setIsAppointmentModalOpen] = useState(false); 
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
 
@@ -49,17 +52,36 @@ function App() {
               </Button>
             </Box>
 
-            <Button 
-              color="inherit"
-              startIcon={<AccountCircleIcon />}
-              onClick={() => setIsAuthModalOpen(true)}
-              sx={{ 
-                fontWeight: 700, mr: 2, borderRadius: 2, px: 2,
-                '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.2)' }
-              }}
-            >
-              Войти
-            </Button>
+            {user ? (
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, mr: 2 }}>
+                <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+                  <Avatar sx={{ bgcolor: '#f50057', width: 32, height: 32, fontSize: '1rem' }}>
+                    {user.email[0].toUpperCase()}
+                  </Avatar>
+                  <Typography variant="body2" sx={{ fontWeight: 600, color: '#fff' }}>
+                    {user.email}
+                  </Typography>
+                </Box>
+                
+                <Tooltip title="Выйти">
+                  <IconButton onClick={logout} sx={{ color: '#fff' }}>
+                    <LogoutIcon fontSize="small" />
+                  </IconButton>
+                </Tooltip>
+              </Box>
+            ) : (
+              <Button 
+                color="inherit"
+                startIcon={<AccountCircleIcon />}
+                onClick={() => setIsAuthModalOpen(true)}
+                sx={{ 
+                  fontWeight: 700, mr: 2, borderRadius: 2, px: 2,
+                  '&:hover': { bgcolor: 'rgba(255, 255, 255, 0.2)' }
+                }}
+              >
+                Войти
+              </Button>
+            )}
 
             <Button 
               variant="contained" color="secondary"
@@ -73,7 +95,6 @@ function App() {
         </Container>
       </AppBar>
 
-      {/* Контент меняется в зависимости от URL */}
       <Box sx={{ py: 4 }}>
         <Routes>
           <Route path="/" element={<DoctorsPage />} />
