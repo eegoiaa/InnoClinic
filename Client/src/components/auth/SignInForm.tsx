@@ -76,7 +76,13 @@ export const SignInForm = ({ onSwitchToSignUp, onSuccess }: SignInFormProps) => 
       
       onSuccess(values.email); 
     } catch (err: any) {
-      setServerError(err.message || "Either an email or a password is incorrect"); 
+      const message = err.message || "";
+      
+      if (message.includes('POST') || message.includes('fetch') || message.includes('500')) {
+        setServerError("The server is temporarily unavailable. Please try again later.");
+      } else {
+        setServerError(message || "Either an email or a password is incorrect");
+      }
     } finally {
       setIsLoading(false);
     }
@@ -141,7 +147,19 @@ export const SignInForm = ({ onSwitchToSignUp, onSuccess }: SignInFormProps) => 
       />
 
       {serverError && (
-        <Typography variant="caption" color="error" sx={{ textAlign: 'center', fontWeight: 600, mt: -1 }}>
+        <Typography 
+          variant="caption" 
+          color="error" 
+          sx={{ 
+            textAlign: 'center', 
+            fontWeight: 700, 
+            mt: -1,
+            bgcolor: '#fff5f5',
+            p: 1,
+            borderRadius: 1,
+            border: '1px solid #ffcdd2'
+          }}
+        >
           {serverError}
         </Typography>
       )}

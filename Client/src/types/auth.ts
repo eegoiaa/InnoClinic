@@ -18,3 +18,13 @@ export interface AuthError {
   message: string;
   errors?: Record<string, string[]>;
 }
+
+export interface RefreshTokenResponse {
+  token: string;
+  expiryTime: string;
+}
+
+export interface SignInResponse {
+  accessToken: string;
+  refreshToken: RefreshTokenResponse;
+}

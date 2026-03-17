@@ -39,7 +39,8 @@ public static class DependencyInjection
 
         services.AddOptions<JwtOptions>()
             .Bind(configuration.GetSection(JwtOptions.SectionName))
-            .Validate(j => !string.IsNullOrWhiteSpace(j.SecretKey) && j.SecretKey.Length >= 32, "JWT: SecretKey must be at least 32 characters long.")
+            .Validate(o => !string.IsNullOrWhiteSpace(o.PrivateKey), "JWT: PrivateKey is required.")
+            .Validate(o => !string.IsNullOrWhiteSpace(o.PublicKey), "JWT: PublicKey is required.")
             .Validate(o => !string.IsNullOrWhiteSpace(o.Issuer), "JWT: Issuer is required.")
             .Validate(o => !string.IsNullOrWhiteSpace(o.Audience), "JWT: Audience is required.")
             .Validate(o => o.AccessTokenExpirationMinutes > 0, "JWT: AccessTokenExpiration must be positive.")

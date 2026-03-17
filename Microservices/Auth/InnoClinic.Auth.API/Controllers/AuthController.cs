@@ -53,7 +53,7 @@ public class AuthController : ControllerBase
             SameSite = SameSiteMode.Strict,
             Expires = DateTime.UtcNow.AddDays(7)
         };
-        Response.Cookies.Append("refresh_token", result.RefreshToken, refreshCookieOptions);
+        Response.Cookies.Append("refresh_token", result.RefreshToken.Token, refreshCookieOptions);
 
         return Ok(new { Message = "You've signed in successfully" });
     }
@@ -68,7 +68,7 @@ public class AuthController : ControllerBase
         var exists = await _messageBus.InvokeAsync<bool>(new CheckEmailQuery(email));
 
         if (!exists)
-            return NotFound(new { Message = "User with this email doesn't exist" });
+            return BadRequest(new { Message = "User with this email doesn't exist" });
 
         return Ok();
     }

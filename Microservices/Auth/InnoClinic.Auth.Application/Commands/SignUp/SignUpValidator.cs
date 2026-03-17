@@ -13,8 +13,6 @@ public class SignUpValidator : AbstractValidator<SignUpCommand>
 
         RuleFor(x => x.Password)
             .NotEmpty().WithMessage("Please, enter the password")
-            .MinimumLength(AuthConstants.RequiredLength)
-                .WithMessage($"Min {AuthConstants.RequiredLength} symbols required")
             .Matches(@"[0-9]").When(_ => AuthConstants.RequireDigit)
                 .WithMessage("Password must contain at least one digit")
             .Matches(@"[A-Z]").When(_ => AuthConstants.RequireUppercase)

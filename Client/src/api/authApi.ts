@@ -1,4 +1,4 @@
-import type { SignUpRequest, SignInRequest } from '../types/auth';
+import type { SignUpRequest, SignInRequest, SignInResponse } from '../types/auth';
 
 export const signUp = async (data: SignUpRequest): Promise<void> => {
   const url = '/auth/api/Auth/sign-up'; 
@@ -17,7 +17,7 @@ export const signUp = async (data: SignUpRequest): Promise<void> => {
   }
 };
 
-export const signIn = async (data: SignInRequest): Promise<void> => {
+export const signIn = async (data: SignInRequest): Promise<SignInResponse> => {
   const url = '/auth/api/Auth/login'; 
   
   const response = await fetch(url, {
@@ -33,6 +33,8 @@ export const signIn = async (data: SignInRequest): Promise<void> => {
     const errorData = await response.json().catch(() => ({}));
     throw new Error(errorData.Message || 'Either an email or a password is incorrect');
   }
+
+  return await response.json();
 };
 
 export const checkEmailExists = async (email: string): Promise<boolean> => {

@@ -1,11 +1,12 @@
 ﻿using InnoClinic.Auth.Application.Interfaces;
 using InnoClinic.Auth.Domain.Entities;
+using InnoClinic.Auth.Domain.Models;
 using InnoClinic.Auth.Domain.Settings;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Text;
+using System.Security.Cryptography;
 
 namespace InnoClinic.Auth.Infrastructure.Services;
 
@@ -24,21 +25,25 @@ public class JwtProvider(IOptions<JwtOptions> options) : IJwtProvider
 
         authClaims.AddRange(roles.Select(role => new Claim(ClaimTypes.Role, role)));
 
-        var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_options.SecretKey));
+        var rsa = RSA.Create();
+        rsa.ImportFromPem(_options.PrivateKey);
+        var key = new RsaSecurityKey(rsa);
 
         var token = new JwtSecurityToken(
             issuer: _options.Issuer,
             audience: _options.Audience,
             expires: DateTime.UtcNow.AddMinutes(_options.AccessTokenExpirationMinutes),
             claims: authClaims,
-            signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
+            signingCredentials: new SigningCredentials(key, SecurityAlgorithms.RsaSha256)
         );
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
 
-    public string GenerateRefreshToken()
+    public RefreshToken GenerateRefreshToken()
     {
-        return Guid.NewGuid().ToString();
+        var token = Convert.ToBase64String(RandomNumberGenerator.GetBytes(32));
+        var expiryTime = DateTime.UtcNow.AddDays(_options.RefreshTokenExpirationDays);
+        return new(token, expiryTime);
     }
 }

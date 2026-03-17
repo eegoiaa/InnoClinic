@@ -1,4 +1,5 @@
-﻿using InnoClinic.Auth.Domain.Entities;
+﻿using InnoClinic.Auth.Domain.Constants;
+using InnoClinic.Auth.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
@@ -21,14 +22,11 @@ public class AuthDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Gui
         builder.Entity<IdentityRoleClaim<Guid>>(entity => entity.ToTable("RoleClaims"));
         builder.Entity<IdentityUserToken<Guid>>(entity => entity.ToTable("UserTokens"));
 
-        var adminRoleId = Guid.Parse("11111111-1111-1111-1111-111111111111");
-        var doctorRoleId = Guid.Parse("22222222-2222-2222-2222-222222222222");
-        var patientRoleId = Guid.Parse("33333333-3333-3333-3333-333333333333");
-
         builder.Entity<IdentityRole<Guid>>().HasData(
-            new IdentityRole<Guid> { Id = adminRoleId, Name = "Admin", NormalizedName = "ADMIN" },
-            new IdentityRole<Guid> { Id = doctorRoleId, Name = "Doctor", NormalizedName = "DOCTOR" },
-            new IdentityRole<Guid> { Id = patientRoleId, Name = "Patient", NormalizedName = "PATIENT" }
+            new IdentityRole<Guid> { Id = RolesConstants.AdminId, Name = RolesConstants.Admin, NormalizedName = RolesConstants.Admin.ToUpper() },
+            new IdentityRole<Guid> { Id = RolesConstants.DoctorId, Name = RolesConstants.Doctor, NormalizedName = RolesConstants    .Doctor.ToUpper() },
+            new IdentityRole<Guid> { Id = RolesConstants.PatientId, Name = RolesConstants.Patient, NormalizedName = RolesConstants.Patient.ToUpper() },
+            new IdentityRole<Guid> { Id = RolesConstants.ReceptionistId, Name = RolesConstants.Receptionist, NormalizedName = RolesConstants.Receptionist.ToUpper() }
         );
     }
 }

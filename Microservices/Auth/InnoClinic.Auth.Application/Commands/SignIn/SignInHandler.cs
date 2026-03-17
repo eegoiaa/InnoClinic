@@ -1,13 +1,7 @@
 ﻿using InnoClinic.Auth.Application.Interfaces;
 using InnoClinic.Auth.Domain.Entities;
 using InnoClinic.Auth.Domain.Exceptions;
-using InnoClinic.Auth.Domain.Settings;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Tokens;
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
-using System.Text;
 
 namespace InnoClinic.Auth.Application.Commands.SignIn;
 
@@ -16,8 +10,7 @@ public static class SignInHandler
     public static async Task<SignInResult> Handle(
         SignInCommand command,
         UserManager<ApplicationUser> userManager,
-        IJwtProvider jwtProvider,
-        IOptions<JwtOptions> options
+        IJwtProvider jwtProvider
         )
     {
         var user = await userManager.FindByEmailAsync(command.Email)
@@ -32,8 +25,8 @@ public static class SignInHandler
         var accessToken = jwtProvider.GenerateAccessToken(user, roles);
         var refreshToken = jwtProvider.GenerateRefreshToken();
 
-        user.RefreshToken = refreshToken;
-        user.RefreshTokenExpiryTime = DateTime.UtcNow.AddDays(options.Value.RefreshTokenExpirationDays);
+        user.RefreshToken = refreshToken.Token;
+        user.RefreshTokenExpiryTime = refreshToken.ExpiryTime;
 
         await userManager.UpdateAsync(user);
 

@@ -1,7 +1,9 @@
-﻿namespace InnoClinic.Auth.Application.Commands.SignIn;
+﻿using InnoClinic.Auth.Domain.Models;
+
+namespace InnoClinic.Auth.Application.Commands.SignIn;
 
 public record SignInResult(
     string AccessToken,
-    string RefreshToken
+    RefreshToken RefreshToken
     );
 
