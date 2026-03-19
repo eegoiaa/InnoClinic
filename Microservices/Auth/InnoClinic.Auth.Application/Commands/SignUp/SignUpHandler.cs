@@ -1,4 +1,5 @@
 ﻿using InnoClinic.Auth.Application.Interfaces;
+using InnoClinic.Auth.Domain.Constants;
 using InnoClinic.Auth.Domain.Entities;
 using InnoClinic.Auth.Domain.Exceptions;
 using InnoClinic.Auth.Domain.Settings;
@@ -27,9 +28,12 @@ public static class SignUpHandler
         var result = await userManager.CreateAsync(user, command.Password);
 
         if (!result.Succeeded)
-        {
             throw new IdentityException(result.Errors);
-        }
+
+        var roleResult = await userManager.AddToRoleAsync(user, RolesConstants.Patient);
+
+        if (!roleResult.Succeeded)
+            throw new IdentityException(roleResult.Errors);
 
         var token = await userManager.GenerateEmailConfirmationTokenAsync(user);
 
