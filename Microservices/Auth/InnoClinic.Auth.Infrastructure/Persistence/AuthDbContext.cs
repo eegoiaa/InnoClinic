@@ -24,7 +24,7 @@ public class AuthDbContext : IdentityDbContext<ApplicationUser, IdentityRole<Gui
 
         builder.Entity<IdentityRole<Guid>>().HasData(
             new IdentityRole<Guid> { Id = RolesConstants.AdminId, Name = RolesConstants.Admin, NormalizedName = RolesConstants.Admin.ToUpper() },
-            new IdentityRole<Guid> { Id = RolesConstants.DoctorId, Name = RolesConstants.Doctor, NormalizedName = RolesConstants    .Doctor.ToUpper() },
+            new IdentityRole<Guid> { Id = RolesConstants.DoctorId, Name = RolesConstants.Doctor, NormalizedName = RolesConstants.Doctor.ToUpper() },
             new IdentityRole<Guid> { Id = RolesConstants.PatientId, Name = RolesConstants.Patient, NormalizedName = RolesConstants.Patient.ToUpper() },
             new IdentityRole<Guid> { Id = RolesConstants.ReceptionistId, Name = RolesConstants.Receptionist, NormalizedName = RolesConstants.Receptionist.ToUpper() }
         );

@@ -63,12 +63,12 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> CheckEmail([FromQuery(Name = "email")] string? email)
     {
         if (string.IsNullOrWhiteSpace(email))
-            return BadRequest(new { Message = "Email parameter is missing or empty" });
+            return Ok(new { Message = "Email parameter is missing or empty" });
         
         var exists = await _messageBus.InvokeAsync<bool>(new CheckEmailQuery(email));
 
         if (!exists)
-            return BadRequest(new { Message = "User with this email doesn't exist" });
+            return Ok(new { Message = "User with this email doesn't exist" });
 
         return Ok();
     }
