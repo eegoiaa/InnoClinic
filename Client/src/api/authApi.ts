@@ -66,3 +66,30 @@ export const confirmEmail = async (userId: string, token: string): Promise<void>
     throw new Error('Ошибка подтверждения почты');
   }
 };
+
+export const signOut = async (): Promise<void> => {
+  const url = '/auth/api/Auth/logout'; 
+  
+  const response = await fetch(url, {
+    method: 'POST', 
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.Message || 'Logout failed');
+  }
+};
+
+export const refreshTokens = async (): Promise<void> => {
+  const url = '/auth/api/Auth/refresh'; 
+  
+  const response = await fetch(url, {
+    method: 'POST',
+    credentials: 'include', 
+  });
+
+  if (!response.ok) {
+    throw new Error('Session expired');
+  }
+};

@@ -26,7 +26,7 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> SignUp([FromBody] SignUpCommand command)
     {
         await _messageBus.InvokeAsync(command);
-        return Ok(new {message = "Success! Please check your email to confirm registration."});
+        return Ok(new { message = "Success! Please check your email to confirm registration." });
     }
 
     [HttpPost("confirm-email")]
@@ -44,7 +44,7 @@ public class AuthController : ControllerBase
         {
             HttpOnly = true,
             Secure = true,
-            SameSite = SameSiteMode.Strict,
+            SameSite = SameSiteMode.Lax,
             Expires = DateTime.UtcNow.AddMinutes(30)
         };
         Response.Cookies.Append("access_token", result.AccessToken, cookieOptions);
@@ -53,7 +53,7 @@ public class AuthController : ControllerBase
         {
             HttpOnly = true,
             Secure = true,
-            SameSite = SameSiteMode.Strict,
+            SameSite = SameSiteMode.Lax,
             Expires = DateTime.UtcNow.AddDays(7)
         };
         Response.Cookies.Append("refresh_token", result.RefreshToken.Token, refreshCookieOptions);
@@ -67,7 +67,7 @@ public class AuthController : ControllerBase
     {
         if (string.IsNullOrWhiteSpace(email))
             return Ok(new { Message = "Email parameter is missing or empty" });
-        
+
         var exists = await _messageBus.InvokeAsync<bool>(new CheckEmailQuery(email));
 
         if (!exists)
@@ -77,7 +77,7 @@ public class AuthController : ControllerBase
     }
 
     [HttpPost("logout")]
-    [Authorize]
+    [AllowAnonymous]
     public async Task<IActionResult> LogOut()
     {
         var userIdString = User.FindFirstValue(ClaimTypes.NameIdentifier);
@@ -104,7 +104,7 @@ public class AuthController : ControllerBase
         {
             HttpOnly = true,
             Secure = true,
-            SameSite = SameSiteMode.Strict,
+            SameSite = SameSiteMode.Lax,
             Expires = DateTime.UtcNow.AddMinutes(30)
         };
         Response.Cookies.Append("access_token", result.AccessToken, cookieOptions);
@@ -113,8 +113,8 @@ public class AuthController : ControllerBase
         {
             HttpOnly = true,
             Secure = true,
-            SameSite = SameSiteMode.Strict,
-            Expires = result.RefreshToken.ExpiryTime 
+            SameSite = SameSiteMode.Lax,
+            Expires = result.RefreshToken.ExpiryTime
         };
         Response.Cookies.Append("refresh_token", result.RefreshToken.Token, refreshCookieOptions);
 
