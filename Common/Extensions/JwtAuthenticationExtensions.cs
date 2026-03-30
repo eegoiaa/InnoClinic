@@ -3,6 +3,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Tokens;
 using System.Security.Cryptography;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using InnoClinic.Common.Options;
 
 namespace InnoClinic.Common.Extensions;
 
@@ -10,14 +11,16 @@ public static class JwtAuthenticationExtensions
 {
     public static IServiceCollection AddRsaJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
-        var jwtSettings = configuration.GetSection("JwtSettings");
-        var publicKeyPem = jwtSettings["PublicKey"];
+        services.AddOptions<JwtOptions>()
+            .Bind(configuration.GetSection(JwtOptions.SectionName))
+            .Validate(j => !string.IsNullOrWhiteSpace(j.Audience), "Audience is missing")
+            .Validate(j => !string.IsNullOrWhiteSpace(j.Issuer), "Issuer is missing")
+            .Validate(j => !string.IsNullOrWhiteSpace(j.PublicKey), "PublicKey is missing");
 
-        if(string.IsNullOrWhiteSpace(publicKeyPem))
-            throw new InvalidOperationException("Public key for JWT is missing in configuration.");
+        var jwtOptions = configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>()!;
 
         var rsa = RSA.Create();
-        rsa.ImportFromPem(publicKeyPem);
+        rsa.ImportFromPem(jwtOptions.PublicKey);
         var rsaKey = new RsaSecurityKey(rsa);
 
         services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -26,14 +29,27 @@ public static class JwtAuthenticationExtensions
                 options.TokenValidationParameters = new TokenValidationParameters
                 {
                     ValidateIssuer = true,
-                    ValidIssuer = jwtSettings["Issuer"],
+                    ValidIssuer = jwtOptions.Issuer,
 
                     ValidateAudience = true,
-                    ValidAudience = jwtSettings["Audience"],
+                    ValidAudience = jwtOptions.Audience,
 
                     ValidateLifetime = true,
                     IssuerSigningKey = rsaKey,
                     ClockSkew = TimeSpan.Zero
+                };
+
+                options.Events = new JwtBearerEvents
+                {
+                    OnMessageReceived = context =>
+                    {
+                        var accessToken = context.Request.Cookies["access_token"];
+
+                        if (!string.IsNullOrEmpty(accessToken))
+                            context.Token = accessToken;
+                        
+                        return Task.CompletedTask;
+                    }
                 };
             });
 

@@ -4,6 +4,8 @@ using InnoClinic.Auth.Domain.Entities;
 using InnoClinic.Auth.Domain.Settings;
 using InnoClinic.Auth.Infrastructure.Persistence;
 using InnoClinic.Auth.Infrastructure.Services;
+using InnoClinic.Common.Extensions;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -37,8 +39,8 @@ public static class DependencyInjection
             .Validate(s => !string.IsNullOrWhiteSpace(s.FromEmail), "SMTP: FromEmail is required.")
             .ValidateOnStart();
 
-        services.AddOptions<JwtOptions>()
-            .Bind(configuration.GetSection(JwtOptions.SectionName))
+        services.AddOptions<AuthJwtOptions>()
+            .Bind(configuration.GetSection(AuthJwtOptions.SectionName))
             .Validate(o => !string.IsNullOrWhiteSpace(o.PrivateKey), "JWT: PrivateKey is required.")
             .Validate(o => !string.IsNullOrWhiteSpace(o.PublicKey), "JWT: PublicKey is required.")
             .Validate(o => !string.IsNullOrWhiteSpace(o.Issuer), "JWT: Issuer is required.")
@@ -65,6 +67,17 @@ public static class DependencyInjection
         })
         .AddEntityFrameworkStores<AuthDbContext>()
         .AddDefaultTokenProviders();
+
+        services.ConfigureApplicationCookie(options =>
+        {
+            options.Events.OnRedirectToLogin = context =>
+            {
+                context.Response.StatusCode = StatusCodes.Status401Unauthorized;
+                return Task.CompletedTask;
+            };
+        });
+
+        services.AddRsaJwtAuthentication(configuration);
 
         services.AddTransient<IEmailService, EmailService>();
         services.AddScoped<IJwtProvider, JwtProvider>();
