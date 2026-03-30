@@ -39,8 +39,8 @@ public static class DependencyInjection
             .Validate(s => !string.IsNullOrWhiteSpace(s.FromEmail), "SMTP: FromEmail is required.")
             .ValidateOnStart();
 
-        services.AddOptions<JwtOptions>()
-            .Bind(configuration.GetSection(JwtOptions.SectionName))
+        services.AddOptions<AuthJwtOptions>()
+            .Bind(configuration.GetSection(AuthJwtOptions.SectionName))
             .Validate(o => !string.IsNullOrWhiteSpace(o.PrivateKey), "JWT: PrivateKey is required.")
             .Validate(o => !string.IsNullOrWhiteSpace(o.PublicKey), "JWT: PublicKey is required.")
             .Validate(o => !string.IsNullOrWhiteSpace(o.Issuer), "JWT: Issuer is required.")

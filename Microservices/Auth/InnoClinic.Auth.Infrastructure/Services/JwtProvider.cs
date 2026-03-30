@@ -10,9 +10,9 @@ using System.Security.Cryptography;
 
 namespace InnoClinic.Auth.Infrastructure.Services;
 
-public class JwtProvider(IOptions<JwtOptions> options) : IJwtProvider
+public class JwtProvider(IOptions<AuthJwtOptions> options) : IJwtProvider
 {
-    private readonly JwtOptions _options = options.Value;
+    private readonly AuthJwtOptions _options = options.Value;
    
     public string GenerateAccessToken(ApplicationUser appUser, IEnumerable<string> roles)
     {

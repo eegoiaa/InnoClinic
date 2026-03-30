@@ -11,11 +11,13 @@ public static class JwtAuthenticationExtensions
 {
     public static IServiceCollection AddRsaJwtAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
-        services.Configure<JwtOptions>(configuration.GetSection("JwtSettings"));
-        var jwtOptions = configuration.GetSection("JwtSettings").Get<JwtOptions>();
+        services.AddOptions<JwtOptions>()
+            .Bind(configuration.GetSection(JwtOptions.SectionName))
+            .Validate(j => !string.IsNullOrWhiteSpace(j.Audience), "Audience is missing")
+            .Validate(j => !string.IsNullOrWhiteSpace(j.Issuer), "Issuer is missing")
+            .Validate(j => !string.IsNullOrWhiteSpace(j.PublicKey), "PublicKey is missing");
 
-        if (jwtOptions == null || string.IsNullOrWhiteSpace(jwtOptions.PublicKey))
-            throw new InvalidOperationException("JWT Public Key is missing in configuration.");
+        var jwtOptions = configuration.GetSection(JwtOptions.SectionName).Get<JwtOptions>()!;
 
         var rsa = RSA.Create();
         rsa.ImportFromPem(jwtOptions.PublicKey);
@@ -41,7 +43,11 @@ public static class JwtAuthenticationExtensions
                 {
                     OnMessageReceived = context =>
                     {
-                        context.Token = context.Request.Cookies["access_token"];
+                        var accessToken = context.Request.Cookies["access_token"];
+
+                        if (!string.IsNullOrEmpty(accessToken))
+                            context.Token = accessToken;
+                        
                         return Task.CompletedTask;
                     }
                 };
