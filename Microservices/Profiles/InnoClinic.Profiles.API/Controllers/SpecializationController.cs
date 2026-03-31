@@ -1,4 +1,4 @@
-﻿using InnoClinic.Profiles.Application.Specializations.Commands.CreateSpecialization;
+﻿using InnoClinic.Profiles.Application.Commands.Specializations.Commands.CreateSpecialization;
 using Microsoft.AspNetCore.Mvc;
 using Wolverine;
 

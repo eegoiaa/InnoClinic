@@ -3,7 +3,7 @@ using InnoClinic.Profiles.Domain.Entities;
 using InnoClinic.Profiles.Infrastructure.Persistence;
 using Wolverine;
 
-namespace InnoClinic.Profiles.Application.Specializations.Commands.CreateSpecialization;
+namespace InnoClinic.Profiles.Application.Commands.Specializations.Commands.CreateSpecialization;
 
 public static class CreateSpecializationHandler
 {

@@ -7,17 +7,21 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Commands\Doctors\Commands\**" />
+    <EmbeddedResource Remove="Commands\Doctors\Commands\**" />
+    <None Remove="Commands\Doctors\Commands\**" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\..\..\Common\InnoClinic.Common.csproj" />
     <ProjectReference Include="..\InnoClinic.Profiles.Domain\InnoClinic.Profiles.Domain.csproj" />
     <ProjectReference Include="..\InnoClinic.Profiles.Infrastructure\InnoClinic.Profiles.Infrastructure.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+	  <PackageReference Include="FluentValidation" Version="12.1.1" />
+	  <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.1" />
     <PackageReference Include="WolverineFx" Version="3.13.5" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Doctors\Commands\" />
   </ItemGroup>
 
 </Project>

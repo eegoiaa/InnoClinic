@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Reflection;
 using Wolverine;
+using Wolverine.FluentValidation;
 using Wolverine.RabbitMQ;
 
 namespace InnoClinic.Profiles.Infrastructure.Configuration;
@@ -37,6 +38,8 @@ public static class DependencyInjection
                    {
                        exchange.ExchangeType = ExchangeType.Fanout;
                    });
+
+            options.UseFluentValidation();
         });
     }
 }
