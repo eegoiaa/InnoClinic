@@ -1,6 +1,6 @@
 using InnoClinic.Common.MIddleware;
+using InnoClinic.Profiles.Application.Commands.Doctors.Queries.GetDoctorsList;
 using InnoClinic.Profiles.Application.Configuration;
-using InnoClinic.Profiles.Application.Doctors.Queries.GetDoctorsList;
 using InnoClinic.Profiles.Infrastructure.Configuration;
 
 var builder = WebApplication.CreateBuilder(args);

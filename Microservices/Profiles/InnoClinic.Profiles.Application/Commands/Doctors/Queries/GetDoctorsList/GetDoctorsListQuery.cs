@@ -1,4 +1,4 @@
-﻿namespace InnoClinic.Profiles.Application.Doctors.Queries.GetDoctorsList;
+﻿namespace InnoClinic.Profiles.Application.Commands.Doctors.Queries.GetDoctorsList;
 
 public record GetDoctorsListQuery(
     string? SearchByName = null,

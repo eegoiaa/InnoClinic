@@ -1,4 +1,4 @@
-﻿using InnoClinic.Profiles.Application.Doctors.Queries.GetDoctorsList;
+﻿using InnoClinic.Profiles.Application.Commands.Doctors.Queries.GetDoctorsList;
 using Microsoft.AspNetCore.Mvc;
 using Wolverine;
 
